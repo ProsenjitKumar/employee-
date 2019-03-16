@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!--search by calender-->
+<div style="padding-right: 300px; padding-left: 300px">
+  <form action="/action_page.html">
+    Search Employee result by Date:
+    <input type="date" name="employee_result">
+    <input type="submit">
+  </form>
+</div>
+
+<!-- DataTables of employees -->
+<div style="padding-right: 300px; padding-left: 300px">
+  <table id="customers">
+  <tr>
+    <th>Record ID</th>
+    <th>Name</th>
+    <th>Log Date</th>
+    <th>Log Time</th>
+    <th>Entry</th>
+    <th>Logout</th>
+    <th>Interval Time</th>
+    <th>Absent</th>
+  </tr>
+    {% for data in history %}
+      <tr>
+        <td>{{ data[0] }}</td>
+        <td>{{ data[1] }}</td>
+        <td>{{ data[2] }}</td>
+        <td>{{ data[3] }}</td>
+        <td>{{ data[4] }}</td>
+        <td>{{ data[5] }}</td>
+        <td>{{ data[6] }}</td>
+        <td>{{ data[10] }}</td>
+      </tr>
+    {% endfor %}
+  </table><br>
+  <a href="#" class="previous">&laquo; Previous</a>
+  <a href="#" class="next">Next &raquo;</a>
+
+  <a href="#" class="previous round">&#8249;</a>
+  <a href="#" class="next round">&#8250;
+</div></a><br><br><br><br>
+
+
+<!--pie chart employee present position survey-->
+<script src= "https://cdn.zingchart.com/zingchart.min.js"></script>
+		<script> zingchart.MODULESDIR = "https://cdn.zingchart.com/modules/";
+		ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9","ee6b7db5b51705a13dc2339db3edaf6d"];</script>
+		<div id='myChart'></div>
+<script>
+    var myConfig = {
+  "type":"pie",
+  "title":{
+    "text":"Employeer Position {{ date_now }} {{ time_now1 }}"
+  },
+  "legend":{
+    "x":"75%",
+    "y":"25%",
+    "border-width":1,
+    "border-color":"gray",
+    "border-radius":"5px",
+    "header":{
+      "text":"Legend",
+      "font-family":"Georgia",
+      "font-size":12,
+      "font-color":"#3333cc",
+      "font-weight":"normal"
+    },
+    "marker":{
+      "type":"circle"
+    },
+    "toggle-action":"remove",
+    "minimize":true,
+    "icon":{
+      "line-color":"#9999ff"
+    },
+    "max-items":8,
+    "overflow":"scroll"
+  },
+  "plotarea":{
+    "margin-right":"30%",
+    "margin-top":"15%"
+  },
+  "plot":{
+    "animation":{
+ 	    "on-legend-toggle": true, //set to true to show animation and false to turn off
+ 	    "effect": 5,
+ 	    "method": 1,
+ 	    "sequence": 1,
+ 	    "speed": 1
+    },
+    "value-box":{
+      "text":"%v",
+      "font-size":12,
+      "font-family":"Georgia",
+      "font-weight":"normal",
+          "placement":"out",
+          "font-color":"gray",
+    },
+    "tooltip":{
+      "text":"%t: %v (%npv%)",
+      "font-color":"black",
+      "font-family":"Georgia",
+      "text-alpha":1,
+      "background-color":"white",
+      "alpha":0.7,
+      "border-width":1,
+      "border-color":"#cccccc",
+      "line-style":"dotted",
+      "border-radius":"10px",
+      "padding":"10%",
+      "placement":"node:center"
+    },
+    "border-width":1,
+    "border-color":"#cccccc",
+    "line-style":"dotted"
+  },
+  "series":[
+    {
+      "values":[{{ absent }}],
+      "background-color":"#cc0000",
+      "text":"Absent"
+    },
+    {
+      "values":[{{ active }}],
+      "background-color":"#339933",
+      "text":"Active"
+    },
+    {
+      "values":[{{ out }}],
+      "background-color":"#0066ff",
+      "text":"Out"
+    }
+
+  ]
+};
+
+zingchart.render({
+	id : 'myChart',
+	data : myConfig,
+	height: 600,
+	width: "100%"
+});
+</script><br><br>
+
+
+  <!--pie chart how many employees are active, absent and out there -->
+  <script>
+  window.onload = function() {
+
+  var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    title: {
+      text: "How many employees are active, absent and out there"
+    },
+    data: [{
+      type: "pie",
+      startAngle: 240,
+      yValueFormatString: "##0\"\"",
+      indexLabel: "{label} {y}",
+      dataPoints: [
+        {y: {{ absent_count }}, label: "Absent"},
+        {y: {{ active_count }}, label: "Active"},
+        {y: {{ out_count }}, label: "Out"},
+      ]
+    }]
+  });
+  chart.render();
+
+  }
+  </script>
+  <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+</body>
+</html>
